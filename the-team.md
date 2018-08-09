@@ -1,7 +1,3 @@
----
-description: The groups and people that made R/Pharma possible
----
-
 # The team
 
 ### Organising committee

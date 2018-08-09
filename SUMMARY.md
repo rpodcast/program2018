@@ -1,6 +1,6 @@
 # Table of contents
 
-* [R/Pharma program](README.md)
+* [R/Pharma 2018 program](README.md)
 * [The team](the-team.md)
 * [Overview](overview.md)
 * [Keynotes](keynotes.md)

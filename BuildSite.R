@@ -18,11 +18,23 @@ library(tidyverse)
       schedule %>%
         filter(!is.na(speaker_id)) %>%
         mutate(order = row_number()) %>%
-        select(speaker_id,order),
+        select(speaker_id,order, date,time),
       by = "speaker_id"
     )
 
-#### Split data
+#### Create time ----
+
+  abstracts <- abstracts %>%
+    mutate(
+      day = case_when(
+        date == "2018/8/15" ~ "Wednesday, 8th August"
+      ),
+      when = paste0(
+        date," at ",time
+      )
+    )
+
+#### Split data ----
 
   abstracts_talks <- abstracts %>%
     filter(
@@ -66,6 +78,7 @@ library(tidyverse)
         ,i_talk$title # title
         ,i_talk$speakerName # name
         ,i_talk$affiliation # affiliation
+        ,i_talk$when
         ,i_talk$abstract # abstract
       ))
     }
@@ -88,6 +101,7 @@ library(tidyverse)
       ,i_talk$title # title
       ,i_talk$speakerName # name
       ,i_talk$affiliation # affiliation
+      ,i_talk$when
       ,i_talk$abstract # abstract
     ))
   }
@@ -108,6 +122,7 @@ library(tidyverse)
       ,i_talk$title # title
       ,i_talk$speakerName # name
       ,i_talk$affiliation # affiliation
+      ,i_talk$when
       ,i_talk$abstract # abstract
     ))
   }

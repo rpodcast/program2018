@@ -157,7 +157,8 @@ description: R/Pharma 2018 schedule.
           `When` = time,
           `Session type` = type,
           `Title` = title
-        )
+        ),
+      format = "markdown"
     ))
 
 cat("
@@ -173,6 +174,7 @@ cat("
           `When` = time,
           `Session type` = type,
           `Title` = title
-        )
+        ),
+      format = "markdown"
     ))
   sink()

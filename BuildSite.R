@@ -30,7 +30,7 @@ library(tidyverse)
         date == "2018/8/15" ~ "Wednesday, 8th August"
       ),
       when = paste0(
-        date," at ",time
+        day," from ",time
       )
     )
 
@@ -126,4 +126,39 @@ library(tidyverse)
       ,i_talk$abstract # abstract
     ))
   }
+  sink()
+
+#### Make overview -------
+  schedule_withtalks <- schedule %>%
+    left_join(
+      abstracts %>%
+        select(speaker_id,title,speakerName),
+      by = "speaker_id"
+    )
+
+
+  overview_header <- jb_readtemplate("overview_header")
+  sink("overview.md")
+  sprintf(
+    overview_header,
+    # day 1
+    knitr::kable(
+      schedule_withtalks %>%
+        filter(date == "2018/8/15") %>%
+        select(
+          `When` = time,
+          `Session type` = type,
+          `Title` = title
+        )
+    ),
+    knitr::kable(
+      schedule_withtalks %>%
+        filter(date == "2018/8/16") %>%
+        select(
+          `When` = time,
+          `Session type` = type,
+          `Title` = title
+        )
+    )
+  )
   sink()

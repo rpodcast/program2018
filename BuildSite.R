@@ -139,10 +139,18 @@ library(tidyverse)
 
   overview_header <- jb_readtemplate("overview_header")
   sink("overview.md")
-  sprintf(
-    overview_header,
+cat(
+"---
+description: R/Pharma 2018 schedule.
+---
+
+# Schedule
+
+## Wednesday
+
+")
     # day 1
-    knitr::kable(
+    cat(knitr::kable(
       schedule_withtalks %>%
         filter(date == "2018/8/15") %>%
         select(
@@ -150,8 +158,15 @@ library(tidyverse)
           `Session type` = type,
           `Title` = title
         )
-    ),
-    knitr::kable(
+    ))
+
+cat("
+
+## Thursday
+
+    ")
+
+    cat(knitr::kable(
       schedule_withtalks %>%
         filter(date == "2018/8/16") %>%
         select(
@@ -159,6 +174,5 @@ library(tidyverse)
           `Session type` = type,
           `Title` = title
         )
-    )
-  )
+    ))
   sink()

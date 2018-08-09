@@ -50,14 +50,13 @@ library(tidyverse)
     content
   }
 
-#### Make talks -------
+#### Make talks by name -------
 
   sink("talks.md")
   cat(jb_readtemplate("talks_header"))
   # loop through talks
   talks_atalk <- jb_readtemplate("talks_atalk")
   # by name
-  cat('{% tabs %} {% tab title="By name" %}')
     for (i in 1:nrow(abstracts_talks)) {
       # get data on one talk
       i_talk <- abstracts_talks[i,]
@@ -70,24 +69,28 @@ library(tidyverse)
         ,i_talk$abstract # abstract
       ))
     }
-  cat("{% endtab %}")
+  sink()
+
+  #### Make talks by order -------
+
+  sink("talks-order.md")
+  cat(jb_readtemplate("talks_header"))
+  # loop through talks
   # by order
-  cat('{% tab title="By order" %}')
-    abstracts_talks <- abstracts_talks %>%
-      arrange(order)
-    for (i in 1:nrow(abstracts_talks)) {
-      # get data on one talk
-      i_talk <- abstracts_talks[i,]
+  abstracts_talks <- abstracts_talks %>%
+    arrange(order)
+  for (i in 1:nrow(abstracts_talks)) {
+    # get data on one talk
+    i_talk <- abstracts_talks[i,]
 
-      cat(sprintf(
-        talks_atalk
-        ,i_talk$title # title
-        ,i_talk$speakerName # name
-        ,i_talk$affiliation # affiliation
-        ,i_talk$abstract # abstract
-      ))
-    }
-  cat("{% endtab %} {% endtabs %}")
+    cat(sprintf(
+      talks_atalk
+      ,i_talk$title # title
+      ,i_talk$speakerName # name
+      ,i_talk$affiliation # affiliation
+      ,i_talk$abstract # abstract
+    ))
+  }
   sink()
 
 #### Make keynotes -------

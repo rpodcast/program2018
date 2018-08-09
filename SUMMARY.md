@@ -4,6 +4,6 @@
 * [The team](the-team.md)
 * [Overview](overview.md)
 * [Keynotes](keynotes.md)
-* [Talks by name](talks.md)
-* [Talks by order](talks-order.md)
+* [Talks by author name](talks.md)
+* [Talks by presentation order](talks-order.md)
 

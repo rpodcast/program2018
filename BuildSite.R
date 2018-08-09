@@ -12,9 +12,22 @@ library(tidyverse)
   # schedule
   schedule <- readr::read_csv("import/rpharma2018_schedule.csv")
 
+#### Add order
+  abstracts <- abstracts %>%
+    left_join(
+      schedule %>%
+        filter(!is.na(speaker_id)) %>%
+        mutate(order = row_number()) %>%
+        select(speaker_id,order),
+      by = "speaker_id"
+    )
+
 #### Split data
 
-  abstracts_talks <- abstracts %>% filter(!is.na(email))
+  abstracts_talks <- abstracts %>%
+    filter(
+      !is.na(email) & speaker_id %in% schedule$speaker_id
+      )
 
   abstracts_keynotes <- abstracts %>% filter(is.na(email))
 
@@ -37,15 +50,55 @@ library(tidyverse)
     content
   }
 
-#### Make talks page -------
+#### Make talks -------
 
   sink("talks.md")
   cat(jb_readtemplate("talks_header"))
   # loop through talks
   talks_atalk <- jb_readtemplate("talks_atalk")
-  for (i in 1:nrow(abstracts_talks)) {
-    # get data on one talk
+  # by name
+  cat('{% tabs %} {% tab title="By name" %}')
+    for (i in 1:nrow(abstracts_talks)) {
+      # get data on one talk
       i_talk <- abstracts_talks[i,]
+
+      cat(sprintf(
+        talks_atalk
+        ,i_talk$title # title
+        ,i_talk$speakerName # name
+        ,i_talk$affiliation # affiliation
+        ,i_talk$abstract # abstract
+      ))
+    }
+  cat("{% endtab %}")
+  # by order
+  cat('{% tab title="By order" %}')
+    abstracts_talks <- abstracts_talks %>%
+      arrange(order)
+    for (i in 1:nrow(abstracts_talks)) {
+      # get data on one talk
+      i_talk <- abstracts_talks[i,]
+
+      cat(sprintf(
+        talks_atalk
+        ,i_talk$title # title
+        ,i_talk$speakerName # name
+        ,i_talk$affiliation # affiliation
+        ,i_talk$abstract # abstract
+      ))
+    }
+  cat("{% endtab %} {% endtabs %}")
+  sink()
+
+#### Make keynotes -------
+
+  sink("keynotes.md")
+  cat(jb_readtemplate("keynotes_header"))
+  # loop through talks
+  talks_atalk <- jb_readtemplate("talks_atalk")
+  for (i in 1:nrow(abstracts_keynotes)) {
+    # get data on one talk
+      i_talk <- abstracts_keynotes[i,]
 
     cat(sprintf(
       talks_atalk

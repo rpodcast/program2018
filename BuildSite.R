@@ -27,7 +27,9 @@ library(tidyverse)
   abstracts <- abstracts %>%
     mutate(
       day = case_when(
-        date == "2018/8/15" ~ "Wednesday, 8th August"
+        date == "2018/8/15" ~ "Wednesday, 15th August",
+        date == "2018/8/16" ~ "Thursday, 16th August",
+        TRUE ~ date
       ),
       when = paste0(
         day," from ",time

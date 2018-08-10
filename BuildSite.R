@@ -134,10 +134,18 @@ library(tidyverse)
       abstracts %>%
         select(speaker_id,title,speakerName),
       by = "speaker_id"
+    ) %>%
+    mutate(
+      info  = case_when(
+        type == "Tutorial" ~ paste(talk_desc,"(Workshop)"),
+        type %in% c("Keynote","Talk","Lightning Talk") ~ title,
+        TRUE ~ type
+      )
     )
 
 
   overview_header <- jb_readtemplate("overview_header")
+
   sink("overview.md")
 cat(
 "---
@@ -150,31 +158,31 @@ description: R/Pharma 2018 schedule.
 
 ")
     # day 1
-    cat(knitr::kable(
-      schedule_withtalks %>%
-        filter(date == "2018/8/15") %>%
-        select(
-          `When` = time,
-          `Session type` = type,
-          `Title` = title
+    temp <- schedule_withtalks %>%
+      filter(date == "2018/8/15")
+
+      cat(paste0("| When | What | \n"))
+      cat(paste0("|----|----| \n"))
+      cat(
+        paste0(
+          "| **",temp$time,"** | _",temp$info,"_ |\n"
         ),
-      format = "markdown"
-    ))
+        sep = ""
+      )
 
 cat("
 
 ## Thursday
 
-    ")
+")
 
-    cat(knitr::kable(
-      schedule_withtalks %>%
-        filter(date == "2018/8/16") %>%
-        select(
-          `When` = time,
-          `Session type` = type,
-          `Title` = title
+    # day 2
+    temp <- schedule_withtalks %>%
+      filter(date == "2018/8/16")
+      cat(
+        paste0(
+          "* **",temp$time,"** _",temp$info,"_ \n"
         ),
-      format = "markdown"
-    ))
+        sep = ""
+      )
   sink()

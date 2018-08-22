@@ -12,6 +12,9 @@ library(tidyverse)
   # schedule
   schedule <- readr::read_csv("import/rpharma2018_schedule.csv")
 
+  # slide links
+  slides <- readr::read_csv("import/rpharma2018_slides.csv")
+
 #### Add order
   abstracts <- abstracts %>%
     left_join(
@@ -27,8 +30,10 @@ library(tidyverse)
   abstracts <- abstracts %>%
     mutate(
       day = case_when(
-        date == "2018/8/15" ~ "Wednesday, 15th August",
-        date == "2018/8/16" ~ "Thursday, 16th August",
+        date == "15.08.18" ~ "Wednesday, 15th August",
+        date == "16.08.18" ~ "Thursday, 16th August",
+        # date == "2018/8/15" ~ "Wednesday, 15th August",
+        # date == "2018/8/16" ~ "Thursday, 16th August",
         TRUE ~ date
       ),
       when = paste0(
@@ -137,14 +142,19 @@ library(tidyverse)
         select(speaker_id,title,speakerName),
       by = "speaker_id"
     ) %>%
+    left_join(
+      slides %>%
+        select(speaker, slides),
+      by = "speaker"
+    ) %>%
     mutate(
       info  = case_when(
         type == "Tutorial" ~ paste(talk_desc,"(Workshop)"),
         type %in% c("Keynote","Talk","Lightning Talk") ~ title,
         TRUE ~ type
-      )
+      ),
+      slides = ifelse(is.na(slides), "", slides)
     )
-
 
   overview_header <- jb_readtemplate("overview_header")
 
@@ -161,13 +171,13 @@ description: R/Pharma 2018 schedule.
 ")
     # day 1
     temp <- schedule_withtalks %>%
-      filter(date == "2018/8/15")
+      filter(date == "15.08.18")
 
-      cat(paste0("| When | What | \n"))
-      cat(paste0("|----|----| \n"))
+      cat(paste0("| When | What | Slides | \n"))
+      cat(paste0("|----|----|----| \n"))
       cat(
         paste0(
-          "| **",temp$time,"** | _",temp$info,"_ |\n"
+          "| **",temp$time,"** | _",temp$info,"_ | ", temp$slides, " | \n"
         ),
         sep = ""
       )
@@ -180,10 +190,10 @@ cat("
 
     # day 2
     temp <- schedule_withtalks %>%
-      filter(date == "2018/8/16")
+      filter(date == "16.08.18")
       cat(
         paste0(
-          "* **",temp$time,"** _",temp$info,"_ \n"
+          "* **",temp$time,"** _",temp$info,"_ ", temp$slides, " \n"
         ),
         sep = ""
       )
